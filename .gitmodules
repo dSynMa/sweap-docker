@@ -1,0 +1,3 @@
+[submodule "sweap"]
+	path = sweap
+	url = https://github.com/shaunazzopardi/sweap/
