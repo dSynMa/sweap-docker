@@ -1,6 +1,3 @@
-[submodule "sweap"]
-	path = sweap
-	url = https://github.com/shaunazzopardi/sweap/
 [submodule "tool-containers"]
 	path = artifact/tool-containers
 	url = git@github.com:Synthesis-of-Infinite-State-Systems/tool-containers.git
