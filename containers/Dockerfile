@@ -139,7 +139,10 @@ COPY tool-containers/tslmt2rpg/wrapper.sh /wrapper.sh
 RUN sed 's/rpgsolve/rpgsolve --generate-program/' /wrapper.sh > wrapper-syn.sh
 RUN chmod +x /wrapper*.sh
 
-RUN git clone https://github.com/shaunazzopardi/sweap.git && cd sweap && git checkout 9edf7a64d97f4290918df09785f0f224f48523df
+RUN git clone https://github.com/shaunazzopardi/sweap.git && \
+    cd sweap && \
+    git checkout 9edf7a64d97f4290918df09785f0f224f48523df && \
+    rm -rf .git
 
 WORKDIR /sweap
 RUN pip install -r requirements.txt && \
