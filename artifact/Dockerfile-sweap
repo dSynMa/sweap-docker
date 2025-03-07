@@ -1,0 +1,39 @@
+FROM ubuntu:22.04
+WORKDIR /
+
+RUN apt-get update && \
+    apt-get install -y \
+    git \
+    libgmp-dev \
+    openjdk-17-jre \
+    wget \
+    unzip \
+    bc \
+    pkg-config \
+    python3-distutils \
+    python3-pip
+
+RUN git clone https://github.com/shaunazzopardi/sweap.git && cd sweap && git checkout 9edf7a64d97f4290918df09785f0f224f48523df
+
+WORKDIR /sweap
+RUN pip install -r requirements.txt && \
+    pip install swig && \
+    pysmt-install --msat --confirm-agreement && \
+    pysmt-install --z3 --confirm-agreement && \
+    pysmt-install --bdd --confirm-agreement && \
+    chmod +x main.py
+
+
+WORKDIR /
+COPY --chmod=0755 sweap-wrapper.sh /bin/sweap
+RUN mkdir LICENSES
+
+RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nuXmv-2.1.0-linux64.tar.xz  && \
+    tar -xvf nuXmv-2.1.0-linux64.tar.xz && \
+    mv /nuXmv-2.1.0-linux64/bin/nuXmv /bin/nuxmv && \
+    mv /nuXmv-2.1.0-linux64/LICENSE.txt /LICENSES/LICENSE-nuxmv && \
+    ln -s /bin/nuxmv /bin/nuXmv && \
+    rm -rf nuXmv-2.1.0-linux64*
+
+COPY LICENSES/LICENSE-libmathsat5j /LICENSES
+COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmathsat5j.so
