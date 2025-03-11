@@ -1,0 +1,71 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper, margin=0.5in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\pagestyle{plain}
+
+\newcommand*{\TIMEOUT}{--}
+\newcommand*{\ERROR}{unk}
+\newcommand*{\unk}{unk}
+\newcommand*{\ERR}{\ERROR}
+
+\begin{document}
+
+\begin{table}
+\centering\scriptsize
+\caption{Overall results.}
+\input{table-summ.tex}
+\end{table}
+
+\begin{table}
+    \centering\scriptsize
+    \caption{LTL benchmarks.}\label{tab:ltl}
+    \input{table-ltl.tex}
+\end{table}
+
+\begin{table}
+\centering\scriptsize
+\caption{%
+    Experimental evaluation on
+    \textbf{RPG}solve,
+    \textbf{R}PG-\textbf{St}eLA,
+    \textbf{T}slmt\textbf{2R}pg,
+    \textbf{Rab}oniel,
+    \textbf{Tem}os,
+    and our \textbf{S}ynthesis tool
+    (with and without \emph{acc}eleration).
+    \textbf{U}~marks unrealisable instances.
+    \TIMEOUT\ denotes timeout,
+    \ERROR\ an error or inconclusive result,
+    \textsf{x} an incorrect verdict.
+    The best synthesis times are set in bold. 
+    }\label{tab:results}
+    \input{table-results.tex}
+\end{table}
+
+\begin{table}
+    \caption{Experiment details for S{$_{acc}$} and S.}\label{tab:details}
+    \centering\tiny
+    \input{table-refinements}
+\end{table}
+\clearpage
+
+\centering
+\includegraphics[width=0.4\textwidth]{cactus-syn.pdf}
+\includegraphics[width=0.4\textwidth]{cactus-real.pdf}
+
+\includegraphics[width=0.7\textwidth]{cactus-easy.pdf}
+
+
+\clearpage
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
