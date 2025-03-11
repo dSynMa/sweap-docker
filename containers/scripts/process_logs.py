@@ -532,7 +532,7 @@ for best, uniq, which_tools in ((syn_best, syn_uniq, syn_tools), (r11y_best, r11
             uniq[uniq_tool] += 1
 
 def fmt_summ_data(summ_dict: dict, tools: Sequence[str], real: bool=False):
-    max_tool = max(summ_dict, key=summ_dict.get)
+    max_tool = max(summ_dict, key=summ_dict.get) if summ_dict else "None"
     if real:
         tools = [t.replace("-syn", "") for t in tools]
     fmt_summ_dict = " & ".join(
