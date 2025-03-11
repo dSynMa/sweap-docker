@@ -129,9 +129,10 @@ $(RPG_LOGS): %.rpgsolve.log : %.rpg
 	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(RABONIEL_LOGS): %.raboniel.log : %.tslmt
+	@echo "Warning: for raboniel, only absolute paths are supported"
 	@echo "$(cmd) $< $(TIMEOUT)"
 	@cd /bin ; $(HEADER) ;\
-	timeout $(TIMEOUT) $(cmd) $(addprefix ../, $<) >> $$FILE 2>&1 ; $(FOOTER)
+	timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(TEMOS_LOGS): %.temos.log : %.tslt
 	@echo "$(cmd) $< $(TIMEOUT)"
