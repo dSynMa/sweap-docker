@@ -1,9 +1,12 @@
-.PHONY : all artifact-container sweap-container
+.PHONY : all artifact-podman sweap-podman sweap-docker
 
-all: artifact-container sweap-container
+all: artifact-podman sweap-podman sweap-docker
 
-artifact-container:
-	podman build -f artifact/Dockerfile -t sweap-artifact
+artifact-podman:
+	podman build -f artifact/Dockerfile -t sweap-artifact --arch amd64
 
-sweap-container:
-	podman build -f artifact/Dockerfile-sweap -t sweap
+sweap-podman:
+	podman build -f artifact/Dockerfile-sweap -t sweap --arch amd64
+
+sweap-docker:
+	docker build containers -f containers/Dockerfile-sweap -t sweap --platform linux/amd64
