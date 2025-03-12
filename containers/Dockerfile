@@ -25,16 +25,12 @@ RUN cp pestel/pestel /bin && rm -rf pestel
 
 # Build rpg-stela
 RUN cd rpg-stela && make && cd ../
-# RUN cp rpg-stela/builds/rpg-stela /bin && rm -rf rpg-stela && rm -rf .stack
 
 ################################################################################
 
 FROM ubuntu:22.04@sha256:33d782143e3a76315de8570db1673fda6d5b17c854190b74e9e890d8e95c85cf as tslmt2rpg-img
 
 WORKDIR /
-
-# Install necessary packages
-# FROM ubuntu:22.04@sha256:33d782143e3a76315de8570db1673fda6d5b17c854190b74e9e890d8e95c85cf as tslmt2rpg-img
 
 RUN apt-get update && \
     apt-get install -y \
@@ -52,13 +48,6 @@ RUN apt-get update && \
     opam \
     pkg-config \
     python3-distutils
-
-# Install z3 version 13.13.4
-# RUN wget -qO z3.zip https://github.com/Z3Prover/z3/releases/download/z3-4.13.4/z3-4.13.4-x64-glibc-2.35.zip && \
-#     unzip z3.zip && \
-#     cp z3-4.13.4-x64-glibc-2.35/bin/z3 /bin/z3 && \
-#     rm -rf z3-4.13.4-x64-glibc-2.35 && \
-#     rm z3.zip
 
 # Install Haskell stack
 RUN wget -qO- https://get.haskellstack.org/ | sh
@@ -99,7 +88,6 @@ WORKDIR /
 
 RUN apt-get update && \
     apt-get install -y \
-    git \
     libgmp-dev \
     openjdk-17-jre \
     wget \
@@ -139,10 +127,9 @@ COPY tool-containers/tslmt2rpg/wrapper.sh /wrapper.sh
 RUN sed 's/rpgsolve/rpgsolve --generate-program/' /wrapper.sh > wrapper-syn.sh
 RUN chmod +x /wrapper*.sh
 
-RUN git clone https://github.com/shaunazzopardi/sweap.git && \
-    cd sweap && \
-    git checkout 9edf7a64d97f4290918df09785f0f224f48523df && \
-    rm -rf .git
+RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/9edf7a64d97f4290918df09785f0f224f48523df.zip  && \
+    unzip sweap.zip && \
+    mv /sweap-9edf7a64d97f4290918df09785f0f224f48523df /sweap
 
 WORKDIR /sweap
 RUN pip install -r requirements.txt && \
