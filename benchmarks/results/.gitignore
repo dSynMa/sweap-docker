@@ -317,3 +317,5 @@ TSWLatexianTemp*
 *.tex
 !main.tex
 results.csv
+*.pdf
+
