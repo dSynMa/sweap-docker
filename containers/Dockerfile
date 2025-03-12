@@ -155,3 +155,5 @@ RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nu
 COPY Makefile /
 COPY scripts /scripts
 COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmathsat5j.so
+RUN pip install -r scripts/requirements.txt && \
+    pip install pyarrow
