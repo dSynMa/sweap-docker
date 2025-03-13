@@ -53,8 +53,8 @@ $(RPG_SYN_LOGS): cmd =			rpgsolve --generate-program --disable-log <
 $(RPG_LOGS): cmd =				rpgsolve --disable-log <
 $(RABONIEL_LOGS): cmd =			./raboniel --spec
 $(TEMOS_LOGS): cmd = 			temos.sh
-$(TSLMT2RPG_LOGS): cmd =		binaries/run-tslmt2rpg.sh $(TIMEOUT) $(MEMLIMIT) 
-$(TSLMT2RPG_SYN_LOGS): cmd =	binaries/run-tslmt2rpg-syn.sh $(TIMEOUT) $(MEMLIMIT) 
+$(TSLMT2RPG_LOGS): cmd =		/wrapper.sh $(TIMEOUT) $(MEMLIMIT) 
+$(TSLMT2RPG_SYN_LOGS): cmd =	/wrapper-syn.sh $(TIMEOUT) $(MEMLIMIT) 
 
 # paths that the tool needs in $PATH
 path =							binaries
