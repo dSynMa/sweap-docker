@@ -88,7 +88,12 @@ WORKDIR /
 
 RUN apt-get update && \
     apt-get install -y \
+    libblas-dev \
+    liblapack-dev \
+    libmpfr-dev \
     libgmp-dev \
+    libglpk-dev \
+    libffi-dev \
     openjdk-17-jre \
     wget \
     unzip \
