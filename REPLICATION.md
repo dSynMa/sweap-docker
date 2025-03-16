@@ -52,6 +52,9 @@ podman run  --memory 16G -t -v ./benchmarks:/benchmarks localhost/sweap-artifact
 
 where `[tool]` is one of `sweap, sweap-noacc, sweap-nobin, rpgsolve, rpgsolve-syn, rpg-stela, tslmt2rpg, tslmt2rpg-syn, raboniel, temos`.
 
+* `sweap` and `sweap-noacc` are respectively S_acc and S in the paper.
+* `sweap-nobin` is S with the binary encoding disabled, and is only evaluated in the appendix.
+
 This command runs `[tool]` on benchmarks taken from the `benchmarks/[tool]` directory, and generates a `benchmarks/[tool]/.../[bench].[tool].log` file for every completed experiment. It will also skip any benchmark for which a log already exists. Hence, the command is restartable: if needed, one may stop the container (`podman stop ...`) and run remaining experiments at a later time.
 
 Note that:
@@ -65,10 +68,18 @@ Special shortcuts are `make all` (every tool except `temos` and `sweap-nobin`) a
 Each experiment is given a default time limit of 1200'' (20 minutes). For shorter timeouts, use e.g.,
 
 ```bash
-podman run ... make [tool] TIMEOUT=120  # For a 2' timeout. TIMEOUT must be UPPERCASE
+podman run ... make [tool] TIMEOUT=120
 ```
 
+for a 2' timeout. `TIMEOUT` **must** be in **upper case**.
 Notice that this might partially affect the output of some scripts in the next section, which expect a 20' timeout.
+
+
+Running the entire benchmark suite, one experiment at a time, on all tools from `make all` with the default timeout takes around 5-6 days.
+To speed up things, one may:
+
+* reduce the timeout as explained before; and/or
+* run two or more containers side by side. This should work as long as the machine has enough resources and the containers are running experiments for different tools.
 
 ## Generating tables and plots
 
@@ -81,7 +92,7 @@ podman run -t -v ./benchmarks:/benchmarks localhost/sweap-artifact:latest make p
 
 This will generate several `.tex` and `.pdf` files and a `.csv` under `benchmarks/results`.
 
-Optionally, you may compile `benchmarks/results/main.tex` to obtain a PDF of the results,
+Optionally, you may compile `benchmarks/results/main.tex` to obtain a PDF of these results,
 using the traditional workflow:
 
 ```bash
@@ -97,16 +108,24 @@ pdflatex main
 To run sweap manually, use:
 
 ```bash
-podman run --interactive -t -v [...bind mount...] localhost/sweap-artifact:latest sweap --synthesise --p /path/to/file.prog
+podman run -t -v [...bind mount...] localhost/sweap-artifact:latest sweap --synthesise --p /path/to/file.prog
 ```
 
 Notice that you will need to bind the directory of your `.prog` file, so that the container can find it. Here, for instance, we kept the `benchmarks` bind. An example:
 
 ```bash
-podman run --interactive -t -v ./benchmarks:/benchmarks localhost/sweap-artifact:latest sweap --synthesise --p /benchmarks/sweap/full-ltl/elevator-paper.prog
+podman run -t -v /path/to/benchmarks:/benchmarks localhost/sweap-artifact:latest sweap --synthesise --p /benchmarks/sweap/full-ltl/elevator-paper.prog
 ```
 
 When it terminates, Sweap prints:
 
 * `Realizable.`, followed by a controller in HOA format, if it manages to synthesise a controller;
 * or `Unrealizable.`, followed by a counterstrategy in DOT format, if it determines that the problem is unrealizable.
+
+Please run:
+
+```bash
+podman run -t -v localhost/sweap-artifact:latest sweap --help
+```
+
+to get detailed usage instructions.
