@@ -3,7 +3,6 @@ WORKDIR /
 
 RUN apt-get update && \
     apt-get install -y \
-    git \
     libgmp-dev \
     openjdk-17-jre \
     wget \
@@ -13,10 +12,9 @@ RUN apt-get update && \
     python3-distutils \
     python3-pip
 
-RUN git clone https://github.com/shaunazzopardi/sweap.git && \
-    cd sweap && \
-    git checkout 9edf7a64d97f4290918df09785f0f224f48523df && \
-    rm -rf .git
+RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/58c1a0b19d05cde91ba316ca70a67b65b7e4d425.zip  && \
+    unzip sweap.zip && \
+    mv /sweap-58c1a0b19d05cde91ba316ca70a67b65b7e4d425 /sweap
 
 WORKDIR /sweap
 RUN pip install -r requirements.txt && \
