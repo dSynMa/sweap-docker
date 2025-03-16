@@ -301,11 +301,11 @@ def get_result(tool, tool_info, bench, bench_info):
         if log:
             break
     if not log:
-        # if tool == "tslmt2rpg":
+        if tool == "tslmt2rpg":
         #     # Some benchmarks are not available in tslmt format.
         #     # So we use the time obtained by rpgsolve (or rpgsolve-syn below)
         #     # and assume the "translation" time from tslmt to be zero
-        #     return get_result("rpgsolve", tools["rpgsolve"], bench, bench_info)
+            return get_result("rpgsolve", tools["rpgsolve"], bench, bench_info)
         if tool == "tslmt2rpg-syn":
             return get_result("rpgsolve-syn", tools["rpgsolve-syn"], bench, bench_info)
         # None means no log found
