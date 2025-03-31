@@ -225,7 +225,7 @@ labels = [x.replace(" (realisability)", "").replace(" (synthesis)", "") for x in
 # # Sort legend alphabetically
 zipped = sorted(zip(handles, labels), key=lambda x: x[1])
 handles, labels = zip(*zipped)
-plot_syn.legend(handles, labels, ncols=2)
+plot_syn.legend(handles, labels, ncols=1)
 
 plot_syn.set_title(f"Synthesis{' (excl. novel LTL instances)' if exclude_full_ltl else ''}")
 plot_syn.set(xlabel="Instances solved")
