@@ -150,15 +150,9 @@ COPY --chmod=0755 sweap-wrapper.sh /bin/sweap
 COPY LICENSES/ /LICENSES
 COPY --chmod=0755 binaries/* /bin
 COPY --chmod=0755 binaries/opt /bin/opt
-
-RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nuXmv-2.1.0-linux64.tar.xz  && \
-    tar -xvf nuXmv-2.1.0-linux64.tar.xz && \
-    mv /nuXmv-2.1.0-linux64/bin/nuXmv /bin/nuxmv && \
-    ln -s /bin/nuxmv /bin/nuXmv && \
-    rm -rf nuXmv-2.1.0-linux64*
-
-COPY Makefile /
-COPY scripts /scripts
 COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmathsat5j.so
+COPY scripts /scripts
 RUN pip install -r scripts/requirements.txt && \
     pip install pyarrow
+
+COPY Makefile /

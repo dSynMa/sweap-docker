@@ -87,9 +87,9 @@ endef
 all: raboniel rpgsolve rpgsolve-syn rpg-stela sweap sweap-noacc tslmt2rpg tslmt2rpg-syn
 everything: all temos sweap-nobin
 
-sweap:          $(SWEAP_LOGS)
-sweap-noacc:    $(SWEAP_LAZY_LOGS)
-sweap-nobin:    $(SWEAP_NOBIN_LOGS)
+sweap:          /bin/nuxmv $(SWEAP_LOGS)
+sweap-noacc:    /bin/nuxmv $(SWEAP_LAZY_LOGS)
+sweap-nobin:    /bin/nuxmv $(SWEAP_NOBIN_LOGS)
 rpg-stela:      $(RPG_STELA_LOGS)
 rpgsolve-syn:   $(RPG_SYN_LOGS)
 rpgsolve:       $(RPG_LOGS)
@@ -182,6 +182,16 @@ clean-timeouts:
 	-@tail -n2 $(TSLMT2RPG_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 	-@tail -n2 $(TSLMT2RPG_SYN_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 
+/bin/nuxmv:
+	@echo "!!! nuxmv not found, it will be installed."
+	@echo "!!! Make sure you read and agree with the NuXmV license at:"
+	@echo "!!! https://nuxmv.fbk.eu/downloads/LICENSE.txt"
+	@wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nuXmv-2.1.0-linux64.tar.xz && \
+    tar -xf nuXmv-2.1.0-linux64.tar.xz && \
+    mv nuXmv-2.1.0-linux64/bin/nuXmv /bin/nuxmv && \
+    rm -rf nuXmv-2.1.0-linux64*
+	@echo "!!! NuXmv installed successfully"
+
 ################################################################################
 
 tables: #$(ALL_LOGS)
@@ -190,3 +200,4 @@ tables: #$(ALL_LOGS)
 plots:
 	cd scripts; \
 	./cactus.py ../benchmarks/results/results.csv
+	./scatter.py ../benchmarks/results/results.csv
