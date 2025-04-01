@@ -11,11 +11,12 @@ Make sure you have read `/LICENSE`, `containers/LICENSE`, and `DISCLAIMER` befor
 In short:
 
 * The original contents of this repository, i.e., mostly the `Dockerfile`s, are BSD-licensed.
-* The image will contain a source copy of the tool. The tool is provided without a license and thus is (c) its authors.
-* The image will contain a copy of `nuxmv`.
+* The image will contain a source copy of the tool, subject to the restrictions described in `containers/LICENSE`.
+* These restrictions do allow artifact evaluations.
 * The image and the tool therein may only be used for the purpose of artifact evaluation.
-* The image cannot be *redistributed* in any form, due to limitation imposed by `nuxmv`'s license. (The plain Dockerfiles may, however, be redistributed under the terms of `/LICENSE`.)
 * Using this version of the tool for any other purpose requires explicit prior consent by the copyright holders.
+* Containers based off the image will automatically download a copy of Nuxmv if needed. This means the user must read and agree with the Nuxmv license (https://nuxmv.fbk.eu/downloads/LICENSE.txt) to use the image.
+* The image itself may be redistributed for academic, non-commercial research purpose.
 
 ## Building the image
 
