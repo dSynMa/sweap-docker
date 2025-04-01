@@ -200,4 +200,3 @@ tables: #$(ALL_LOGS)
 plots:
 	cd scripts; \
 	./cactus.py ../benchmarks/results/results.csv
-	./scatter.py ../benchmarks/results/results.csv
