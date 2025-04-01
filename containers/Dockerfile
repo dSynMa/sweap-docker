@@ -16,8 +16,8 @@ RUN apt-get install -y \
 RUN wget -qO- https://get.haskellstack.org/ | sh
 
 # Download and extract artifact, remove unneeded stuff
-RUN wget -q -O artifact.zip https://zenodo.org/records/10939871/files/artifact.zip?download=1 
-RUN unzip artifact.zip && rm artifact.zip && rm rpg-stela-docker.tar && rm .dockerignore && rm -rf muval 
+RUN wget -q -O artifact.zip https://zenodo.org/records/10939871/files/artifact.zip?download=1
+RUN unzip artifact.zip && rm artifact.zip && rm rpg-stela-docker.tar && rm .dockerignore && rm -rf muval
 
 # Build Pestel
 RUN cd pestel && make && cd ../
@@ -55,18 +55,18 @@ RUN wget -qO- https://get.haskellstack.org/ | sh
 # Download and extract artifact
 RUN wget -qO artifact.zip https://zenodo.org/records/13939202/files/popl25-artifact-21.zip?download=1 && \
     unzip artifact.zip && rm artifact.zip && rm artifact.ova && rm README.md && rm LICENSE-INFORMATION && \
-    unzip artifact-content.zip && rm artifact-content.zip && rm -rf artifact-content/binaries/ 
+    unzip artifact-content.zip && rm artifact-content.zip && rm -rf artifact-content/binaries/
 
 # Install Opam
 RUN opam init --disable-sandboxing
-RUN opam switch create 5.0.0 
-RUN opam install dune 
+RUN opam switch create 5.0.0
+RUN opam install dune
 
 # Build Spot
 WORKDIR /artifact-content/src-spot
 RUN ./configure --prefix /usr --disable-python && make && make install
 
-# Build tslmt2rpg 
+# Build tslmt2rpg
 WORKDIR /artifact-content/src-tslmt2rpg
 RUN make && cp builds/tslmt2rpg /bin && cp builds/rpgsolve /bin
 
@@ -127,19 +127,21 @@ COPY --from=tslmt2rpg-img /usr/lib/libbddx* /usr/lib/libspot* /usr/lib
 
 
 COPY tool-containers/tslmt2rpg/call-muval.sh /muval/call-muval.sh
-RUN chmod +x /muval/call-muval.sh 
+RUN chmod +x /muval/call-muval.sh
 COPY tool-containers/tslmt2rpg/wrapper.sh /wrapper.sh
 RUN sed 's/rpgsolve/rpgsolve --generate-program/' /wrapper.sh > wrapper-syn.sh
 RUN chmod +x /wrapper*.sh
 
-RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/58c1a0b19d05cde91ba316ca70a67b65b7e4d425.zip  && \
+RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/414c62ad459b94bdaef3d71cc8d2d1a105a9348f.zip  && \
     unzip sweap.zip && \
-    mv /sweap-58c1a0b19d05cde91ba316ca70a67b65b7e4d425 /sweap
+    mv /sweap-414c62ad459b94bdaef3d71cc8d2d1a105a9348f /sweap
 
 WORKDIR /sweap
 RUN pip install -r requirements.txt && \
-    pip install swig && \
-    pysmt-install --msat --confirm-agreement && \
+    pip install pysmt --pre --force && \
+    pip install swig
+
+RUN pysmt-install --msat --confirm-agreement && \
     pysmt-install --z3 --confirm-agreement && \
     pysmt-install --bdd --confirm-agreement && \
     chmod +x main.py
