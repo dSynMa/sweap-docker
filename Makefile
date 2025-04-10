@@ -3,10 +3,10 @@
 all: artifact-podman sweap-podman sweap-docker
 
 artifact-podman:
-	podman build -f containers/Dockerfile -t sweap-artifact --arch amd64
+	podman build -f containers/Dockerfile -t sweap-artifact:v1.1 --arch amd64
 
 artifact-docker:
-	docker build containers -f containers/Dockerfile -t sweap-artifact --platform linux/amd64
+	docker build containers -f containers/Dockerfile -t sweap-artifact:v1.1 --platform linux/amd64
 
 sweap-podman:
 	podman build -f containers/Dockerfile-sweap -t sweap --arch amd64

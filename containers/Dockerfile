@@ -132,9 +132,9 @@ COPY tool-containers/tslmt2rpg/wrapper.sh /wrapper.sh
 RUN sed 's/rpgsolve/rpgsolve --generate-program/' /wrapper.sh > wrapper-syn.sh
 RUN chmod +x /wrapper*.sh
 
-RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/414c62ad459b94bdaef3d71cc8d2d1a105a9348f.zip  && \
+RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/c049ef73a2aeae22a2800ad75260606d394a43a9.zip  && \
     unzip sweap.zip && \
-    mv /sweap-414c62ad459b94bdaef3d71cc8d2d1a105a9348f /sweap
+    mv /sweap-c049ef73a2aeae22a2800ad75260606d394a43a9 /sweap
 
 WORKDIR /sweap
 RUN pip install -r requirements.txt && \
