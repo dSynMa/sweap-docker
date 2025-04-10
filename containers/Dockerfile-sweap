@@ -40,3 +40,4 @@ RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nu
 
 COPY LICENSES/LICENSE-libmathsat5j /LICENSES
 COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmathsat5j.so
+COPY LICENSE /LICENSES/LICENSE-sweap

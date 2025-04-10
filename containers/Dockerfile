@@ -158,3 +158,4 @@ RUN pip install -r scripts/requirements.txt && \
     pip install pyarrow
 
 COPY Makefile /
+COPY LICENSE /LICENSES/LICENSE-sweap
