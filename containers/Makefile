@@ -154,6 +154,7 @@ clean: clean-aux
 	@echo "Cleaning up all logs..."
 	-@rm $(SWEAP_LOGS) 2>/dev/null || true
 	-@rm $(SWEAP_LAZY_LOGS) 2>/dev/null || true
+	-@rm $(SWEAP_NOBIN_LOGS) 2>/dev/null || true
 	-@rm $(RPG_LOGS) 2>/dev/null || true
 	-@rm $(RPG_SYN_LOGS) 2>/dev/null || true
 	-@rm $(RPG_STELA_LOGS) 2>/dev/null || true
@@ -176,6 +177,7 @@ clean-timeouts:
 	-@tail -n2 $(TEMOS_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 	-@tail -n2 $(SWEAP_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 	-@tail -n2 $(SWEAP_LAZY_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
+	-@tail -n2 $(SWEAP_NOBIN_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 	-@tail -n2 $(RPG_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 	-@tail -n2 $(RPG_SYN_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
 	-@tail -n2 $(RPG_STELA_LOGS) 2>/dev/null | grep -B1 124 | grep "==>" | cut -d ' ' -f2 | xargs rm -v 2>/dev/null || true
