@@ -87,16 +87,16 @@ endef
 all: raboniel rpgsolve rpgsolve-syn rpg-stela sweap sweap-noacc tslmt2rpg tslmt2rpg-syn
 everything: all temos sweap-nobin
 
-sweap:          /bin/nuxmv $(SWEAP_LOGS)
-sweap-noacc:    /bin/nuxmv $(SWEAP_LAZY_LOGS)
-sweap-nobin:    /bin/nuxmv $(SWEAP_NOBIN_LOGS)
-rpg-stela:      $(RPG_STELA_LOGS)
-rpgsolve-syn:   $(RPG_SYN_LOGS)
-rpgsolve:       $(RPG_LOGS)
-raboniel:       $(RABONIEL_LOGS)
-temos:          $(TEMOS_LOGS)
-tslmt2rpg:      $(TSLMT2RPG_LOGS)
-tslmt2rpg-syn:  $(TSLMT2RPG_SYN_LOGS)
+sweap:          /bin/nuxmv check-existing-logs-sweap $(SWEAP_LOGS)
+sweap-noacc:    /bin/nuxmv check-existing-logs-sweap-noacc $(SWEAP_LAZY_LOGS)
+sweap-nobin:    /bin/nuxmv check-existing-logs-sweap-nobin $(SWEAP_NOBIN_LOGS)
+rpg-stela:      check-existing-logs-rpg-stela $(RPG_STELA_LOGS)
+rpgsolve-syn:   check-existing-logs-rpgsolve-syn $(RPG_SYN_LOGS)
+rpgsolve:       check-existing-logs-rpgsolve $(RPG_LOGS)
+raboniel:       check-existing-logs-raboniel $(RABONIEL_LOGS)
+temos:          check-existing-logs-temos $(TEMOS_LOGS)
+tslmt2rpg:      check-existing-logs-tslmt2rpg $(TSLMT2RPG_LOGS)
+tslmt2rpg-syn:  check-existing-logs-tslmt2rpg-syn $(TSLMT2RPG_SYN_LOGS)
 
 ################################################################################
 # Here are the core commands that run a tool on a benchmark <bench>.<ext>
@@ -193,11 +193,42 @@ clean-timeouts:
     rm -rf nuXmv-2.1.0-linux64*
 	@echo "!!! NuXmv installed successfully"
 
-################################################################################
 
+################################################################################
 tables: #$(ALL_LOGS)
 	@scripts/process_logs.py $(BENCHMARKS_DIR)
 
 plots:
 	cd scripts; \
 	./cactus.py ../benchmarks/results/results.csv
+
+define TEST_LOGS
+	if [ "$$number" -ge "$$exp" ] ; then \
+		echo "Logs already exist, no experiments will run." && \
+		echo "Use 'make clean' or 'make clean-timeouts' to remove log files." ; \
+	fi	
+endef
+
+check-existing-logs-sweap:
+	@number=`find $(BENCHMARKS_DIR)/sweap -iname '*.sweap.log' | wc -l`; exp=97 ; $(TEST_LOGS)
+check-existing-logs-sweap-noacc:
+	@number=`find $(BENCHMARKS_DIR)/sweap -iname '*.sweap-noacc.log' | wc -l`; exp=97 ; $(TEST_LOGS)
+check-existing-logs-sweap-nobin:
+	@number=`find $(BENCHMARKS_DIR)/sweap -iname '*.sweap-nobin.log' | wc -l`; exp=97 ; $(TEST_LOGS)
+
+check-existing-logs-rpgsolve:
+	@number=`find $(BENCHMARKS_DIR)/rpgsolve -iname '*.rpgsolve.log' | wc -l`; exp=88 ; $(TEST_LOGS)
+check-existing-logs-rpgsolve-syn:
+	@number=`find $(BENCHMARKS_DIR)/rpgsolve -iname '*.rpgsolve-syn.log' | wc -l`; exp=88 ; $(TEST_LOGS)
+check-existing-logs-rpg-stela:
+	@number=`find $(BENCHMARKS_DIR)/rpgsolve -iname '*.rpg-stela.log' | wc -l`; exp=88 ; $(TEST_LOGS)
+
+check-existing-logs-raboniel:
+	@number=`find $(BENCHMARKS_DIR)/raboniel -iname '*.raboniel.log' | wc -l`; exp=66 ; $(TEST_LOGS)
+check-existing-logs-temos:
+	@number=`find $(BENCHMARKS_DIR)/temos -iname '*.temos.log' | wc -l`; exp=66 ; $(TEST_LOGS)
+
+check-existing-logs-tslmt2rpg:
+	@number=`find $(BENCHMARKS_DIR)/tslmt2rpg -iname '*.tslmt2rpg.log' | wc -l`; exp=66 ; $(TEST_LOGS)
+check-existing-logs-tslmt2rpg-syn:
+	@number=`find $(BENCHMARKS_DIR)/tslmt2rpg -iname '*.tslmt2rpg-syn.log' | wc -l`; exp=66 ; $(TEST_LOGS)
