@@ -106,45 +106,44 @@ tslmt2rpg-syn:  $(TSLMT2RPG_SYN_LOGS)
 
 $(SWEAP_LOGS): %.sweap.log: %.prog
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(SWEAP_LAZY_LOGS): %.sweap-noacc.log: %.prog
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(SWEAP_NOBIN_LOGS): %.sweap-nobin.log: %.prog
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(RPG_STELA_LOGS): %.rpg-stela.log : %.rpg
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(RPG_SYN_LOGS): %.rpgsolve-syn.log : %.rpg
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(RPG_LOGS): %.rpgsolve.log : %.rpg
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(RABONIEL_LOGS): %.raboniel.log : %.tslmt
-	@echo "Warning: for raboniel, only absolute paths are supported"
 	@echo "$(cmd) $< $(TIMEOUT)"
 	@cd /bin ; $(HEADER) ;\
 	timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(TEMOS_LOGS): %.temos.log : %.tslt
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(TSLMT2RPG_LOGS): %.tslmt2rpg.log : %.tslmt
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 $(TSLMT2RPG_SYN_LOGS): %.tslmt2rpg-syn.log : %.tslmt
 	@echo "$(cmd) $< $(TIMEOUT)"
-	@$(HEADER) ; timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
+	@$(HEADER) ; /usr/bin/time timeout $(TIMEOUT) $(cmd) $< >> $$FILE 2>&1 ; $(FOOTER)
 
 ################################################################################
 

@@ -98,6 +98,7 @@ RUN apt-get update && \
     wget \
     unzip \
     bc \
+    time \
     pkg-config \
     python3-distutils \
     python3-pip
