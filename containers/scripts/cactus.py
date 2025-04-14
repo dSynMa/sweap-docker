@@ -151,15 +151,6 @@ fig.tight_layout()
 fig.savefig(DIR / f"cactus-easy.{FORMAT}", dpi=300)
 fig.clear()
 
-
-# real_df = (
-#     joined
-#     .drop(*(
-#         name for name in legend.values()
-#         if name in joined.columns and 
-#         "(realisability)" not in name and
-#         "Our tool" not in name)))
-
 stacked_real = (
     stacked
     .filter(
@@ -171,9 +162,8 @@ plot_real = sns.lineplot(
     x="instances", y="time",
     hue="tool", style="tool",
     **lineplot_config)
-# plot_real.set(yscale='log')
 
-# ## Keep line styles consistent
+# Keep line styles consistent
 handles, labels = plot_real.get_legend_handles_labels()
 
 for i, tool in enumerate(labels):
@@ -183,7 +173,7 @@ for i, tool in enumerate(labels):
         ln.set_linestyle(linestyles.get(tool, '-'))
         ln.set_marker(styles[tool].get_marker())
 
-## Sort legend alphabetically
+# Sort legend alphabetically
 zipped = sorted(zip(handles, labels), key=lambda x: x[1])
 handles, labels = zip(*zipped)
 
@@ -198,7 +188,7 @@ fig = plot_real.get_figure()
 fig.tight_layout()
 fig.savefig(DIR / f"cactus-real.{FORMAT}", dpi=300)
 
-## Synthesis results
+# Synthesis results
 fig.clear()
 
 stacked_syn = (
@@ -213,7 +203,7 @@ plot_syn = sns.lineplot(
 
 plot_syn.figure.set_size_inches(4.6, 4.6)
 
-# # Keep line styles consistent
+# Keep line styles consistent
 handles, labels = plot_syn.get_legend_handles_labels()
 for i, tool in enumerate(labels):
     for ln in (plot_syn.lines[i], handles[i]):
@@ -222,7 +212,7 @@ for i, tool in enumerate(labels):
         ln.set_linestyle(linestyles.get(tool, '-'))
         ln.set_marker(styles[tool].get_marker())
 labels = [x.replace(" (realisability)", "").replace(" (synthesis)", "") for x in labels]
-# # Sort legend alphabetically
+# Sort legend alphabetically
 zipped = sorted(zip(handles, labels), key=lambda x: x[1])
 handles, labels = zip(*zipped)
 plot_syn.legend(handles, labels, ncols=1)
@@ -268,6 +258,9 @@ ln.lines[0].set_linewidth(1)
 ln.lines[0].set_color('r')
 scatter.set_xbound(lower=1, upper=xmax)
 scatter.set_ybound(lower=1, upper=xmax)
+scatter.set_clip_on(False)
+mpl.pyplot.setp(scatter.collections, clip_on=False)
+mpl.pyplot.setp(scatter.artists, clip_on=False)
 scatter.set(yscale='log')
 scatter.set(xscale='log')
 scatter.figure.savefig(DIR / "speedup.pdf", dpi=300)
