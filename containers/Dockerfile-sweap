@@ -12,9 +12,9 @@ RUN apt-get update && \
     python3-distutils \
     python3-pip
 
-RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/414c62ad459b94bdaef3d71cc8d2d1a105a9348f.zip  && \
+RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/a28ec311e5760508267af50992f18eaf9ecc9f7f.zip  && \
     unzip sweap.zip && \
-    mv /sweap-414c62ad459b94bdaef3d71cc8d2d1a105a9348f /sweap
+    mv /sweap-a28ec311e5760508267af50992f18eaf9ecc9f7f /sweap
 
 WORKDIR /sweap
 RUN pip install -r requirements.txt && \
