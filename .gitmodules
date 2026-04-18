@@ -1,3 +1,0 @@
-[submodule "tool-containers"]
-	path = containers/tool-containers
-	url = git@github.com:Synthesis-of-Infinite-State-Systems/tool-containers.git
