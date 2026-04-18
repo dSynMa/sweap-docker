@@ -110,12 +110,6 @@ COPY --from=issy-img /usr/bin/issy /usr/bin/issy
 COPY --from=issy-img /usr/bin/call-muval /usr/bin/call-muval
 COPY --from=issy-img /muval /muval
 
-## Copy spot files
-COPY --from=issy-img /usr/bin/aut* /usr/bin/dstar2tgba /usr/bin/genaut /usr/bin/genltl /usr/bin/ltl* /usr/bin/rand* /usr/bin/
-COPY --from=issy-img /usr/include/bddx.h /usr/include/bvecx.h /usr/include/fddx.h /usr/include/
-COPY --from=issy-img /usr/include/spot /usr/include
-COPY --from=issy-img /usr/lib/libbddx* /usr/lib/libspot* /usr/lib/
-
 RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/12a2d634061cefd845103886b4efd1baaa6a147d.zip  && \
     unzip sweap.zip && \
     mv /sweap-12a2d634061cefd845103886b4efd1baaa6a147d /sweap
@@ -137,17 +131,17 @@ COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmat
 RUN pip install --break-system-packages -r /sweap/benchmarks/scripts/requirements.txt && \
     pip install --break-system-packages pyarrow
 
-# COPY Makefile /
 COPY LICENSE /LICENSE
-
 
 ARG SEMML_REF=main
 ARG SEMML_XMX=30G
 RUN rm -rf /sweap/binaries/semml && \
     test ! -e /sweap/binaries/semml && \
-    git clone --depth 1 --branch "${SEMML_REF}" https://gitlab.com/live-lab/software/semml.git /sweap/binaries/semml && \
+    wget --content-disposition https://gitlab.com/live-lab/software/semml/-/archive/e2650bc88f7a6bdabb52e61f0571039583075c2f/semml-e2650bc88f7a6bdabb52e61f0571039583075c2f.zip && \
+    unzip semml-e2650bc88f7a6bdabb52e61f0571039583075c2f.zip && \
+    mv semml-e2650bc88f7a6bdabb52e61f0571039583075c2f /sweap/binaries/semml && \
+    rm semml-e2650bc88f7a6bdabb52e61f0571039583075c2f.zip && \
     cd /sweap/binaries/semml && \
-    git checkout e2650bc88f7a6bdabb52e61f0571039583075c2f && \    
     sed -E -i "s/-Xmx[0-9]+[KMG]/-Xmx${SEMML_XMX}/g" build.gradle.kts && \
     python3 build.py --target executable && \
     python3 semml.py --help >/dev/null
@@ -177,3 +171,10 @@ RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nu
     mv /nuXmv-2.1.0-linux64/LICENSE.txt /sweap/binaries/LICENSE-nuxmv && \
     ln -s /bin/nuxmv /bin/nuXmv && \
     rm -rf nuXmv-2.1.0-linux64*
+
+COPY --from=issy-img /usr/bin/issy-bin /usr/bin/issy-bin
+COPY --from=issy-img /usr/bin/z3-4.15.1 /usr/bin/z3-4.15.1
+RUN sed -i "s@/usr/bin/ltl2tgba@/usr/local/bin/ltl2tgba@g" /usr/bin/issy
+
+# RUN cp /sweap/Makefile /Makefile && \
+#     sed -i "s/issy/issy-bin/g" /Makefile && \
