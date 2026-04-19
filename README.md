@@ -17,15 +17,11 @@ Justification for the badges: [no need to justify Available -- just provide the 
     - replicated: [which claims/results of the paper are replicated by the
       artifact and how (you can, e.g., refer to a concrete point in FULL REVIEW
       below), e.g.,
-       * Table 1: point (1)
-       * Figure 1: point (2)
-       * Figures 2 and 3: point (3)
-       * Figure 4: point (4) [requires external connectivity]
-       * Proof of Thm. 5: point (5)
+       * Figure 1, 
+       * Table 2.
       ]
 
-    - not-replicated: This artifact does not automatically separate results
-      for realisable/unrealisable problems (Tables [XXXX]).
+    - not-replicated: 
 
 
   * Reusable:  The tool is licensed under GNU GPLv3. The docker image allows
@@ -133,7 +129,7 @@ Then, the full benchmark suite may be evaluated by running these commands:
 
 ```
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-semml
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-semml-dual
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-dual
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix-dual
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg
@@ -159,12 +155,34 @@ paper. To delete only the results for experiments that timed out, run the
 following command:
 
 ```
-docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make clean-timeouts```
+docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make clean-timeouts
 ```
 
-Again, use the 
+Also note that the experiments are resumable. If a `make` task is terminated
+abruptly, invoking the same command will only run the experiments that have
+not yet been performed.
 
+Again, use the commands
 
+```
+docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make tables > /dev/null
+cat benchmarks/results/stats.csv
+```
+
+to obtain statistics on the results. (This may be done at any time without
+interfering with running experiments). These results directly correspond
+to those in Table 1, although they are not broken down into realisable and
+unrealisable problems.
+
+To recreate the scatter plots from Figure 2 and the tables in Appendix
+(Tables 3--5), run the following command:
+
+```
+docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make plots
+```
+
+The plots and TeX code for the tables will be generated in
+`benchmarks/results`.
 
 -------------------------------------------------------------------------------
 **                             FINAL REMARKS                                 **
