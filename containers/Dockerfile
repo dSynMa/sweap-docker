@@ -42,7 +42,7 @@ RUN apt-get update \
 # Build MuVal
 RUN opam init --disable-sandboxing \
  && opam switch create 5.2.0 \
- && opam install dune 
+ && opam install dune
 
 RUN curl -L --output out.zip https://github.com/hiroshi-unno/coar/archive/1d49999975b00f1430b3c9d10b90ab00b561e836.zip \
  && unzip out.zip \
@@ -75,6 +75,33 @@ RUN chmod +x /usr/bin/issy  \
  && chmod +x /usr/bin/call-muval
 
 ###############################################################################
+FROM ubuntu:24.04@sha256:3afff29dffbc200d202546dc6c4f614edc3b109691e7ab4aa23d02b42ba86790 as semml-img
+WORKDIR /
+
+RUN apt-get update && \
+    apt-get install -y \
+    openjdk-17-jdk-headless \
+    python3-pip \
+    python3-setuptools \
+    unzip \
+    wget
+
+
+ARG SEMML_REV=e2650bc88f7a6bdabb52e61f0571039583075c2f
+ARG SEMML_XMX=30G
+RUN mkdir -p /binaries && \
+    test ! -e /binaries/semml && \
+    wget --content-disposition https://gitlab.com/live-lab/software/semml/-/archive/${SEMML_REV}/semml-${SEMML_REV}.zip && \
+    unzip semml-${SEMML_REV}.zip && \
+    pip install --break-system-packages 'pyyaml==6.0.2' && \
+    mv semml-${SEMML_REV} /binaries/semml && \
+    rm semml-${SEMML_REV}.zip && \
+    cd /binaries/semml && \
+    sed -E -i "s/-Xmx[0-9]+[KMG]/-Xmx${SEMML_XMX}/g" build.gradle.kts && \
+    python3 build.py --target executable && \
+    python3 semml.py --help >/dev/null
+
+###############################################################################
 
 FROM ubuntu:24.04@sha256:3afff29dffbc200d202546dc6c4f614edc3b109691e7ab4aa23d02b42ba86790 as final
 WORKDIR /
@@ -96,6 +123,16 @@ RUN apt-get update && \
     python3-pip \
     python3-setuptools
 
+COPY LICENSE /LICENSE
+COPY --chmod=0755 sweap-wrapper.sh /bin/sweap
+COPY --from=issy-img /usr/bin/issy /usr/bin/issy
+COPY --from=issy-img /usr/bin/call-muval /usr/bin/call-muval
+COPY --from=issy-img /muval /muval
+COPY --from=issy-img /usr/bin/issy-bin /usr/bin/issy-bin
+COPY --from=issy-img /usr/bin/z3-4.15.1 /usr/bin/z3-4.15.1
+COPY --from=semml-img /binaries /binaries
+RUN sed -i "s@/usr/bin/ltl2tgba@/usr/local/bin/ltl2tgba@g" /usr/bin/issy
+
 # Install z3 version 13.13.4
 RUN wget -qO z3.zip https://github.com/Z3Prover/z3/releases/download/z3-4.13.4/z3-4.13.4-x64-glibc-2.35.zip && \
     unzip z3.zip && \
@@ -106,45 +143,22 @@ RUN wget -qO z3.zip https://github.com/Z3Prover/z3/releases/download/z3-4.13.4/z
     rm -rf z3-4.13.4-x64-glibc-2.35 && \
     rm z3.zip
 
-COPY --from=issy-img /usr/bin/issy /usr/bin/issy
-COPY --from=issy-img /usr/bin/call-muval /usr/bin/call-muval
-COPY --from=issy-img /muval /muval
+RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nuXmv-2.1.0-linux64.tar.xz  && \
+    tar -xvf nuXmv-2.1.0-linux64.tar.xz && \
+    mkdir -p /binaries && \
+    mv /nuXmv-2.1.0-linux64/bin/nuXmv /bin/nuxmv && \
+    mv /nuXmv-2.1.0-linux64/LICENSE.txt /binaries/LICENSE-nuxmv && \
+    ln -s /bin/nuxmv /bin/nuXmv && \
+    rm -rf nuXmv-2.1.0-linux64*
 
-RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/12a2d634061cefd845103886b4efd1baaa6a147d.zip  && \
-    unzip sweap.zip && \
-    mv /sweap-12a2d634061cefd845103886b4efd1baaa6a147d /sweap
 
-WORKDIR /sweap
-RUN pip install --break-system-packages -r requirements.txt && \
-    pip install --break-system-packages pysmt --pre --force && \
-    # swig 4.3.1 required by repycudd
-    pip install --break-system-packages 'swig==4.3.1'
+RUN pip install --break-system-packages pysmt --pre --force && \
+    pip install --break-system-packages 'swig==4.3.1' && \
+    pip install --break-system-packages pyarrow
 
 RUN pysmt-install --msat --confirm-agreement && \
     pysmt-install --z3 --confirm-agreement && \
     pysmt-install --bdd --confirm-agreement
-
-WORKDIR /
-COPY --chmod=0755 sweap-wrapper.sh /bin/sweap
-COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmathsat5j.so
-# COPY scripts /scripts
-RUN pip install --break-system-packages -r /sweap/benchmarks/scripts/requirements.txt && \
-    pip install --break-system-packages pyarrow
-
-COPY LICENSE /LICENSE
-
-ARG SEMML_REF=main
-ARG SEMML_XMX=30G
-RUN rm -rf /sweap/binaries/semml && \
-    test ! -e /sweap/binaries/semml && \
-    wget --content-disposition https://gitlab.com/live-lab/software/semml/-/archive/e2650bc88f7a6bdabb52e61f0571039583075c2f/semml-e2650bc88f7a6bdabb52e61f0571039583075c2f.zip && \
-    unzip semml-e2650bc88f7a6bdabb52e61f0571039583075c2f.zip && \
-    mv semml-e2650bc88f7a6bdabb52e61f0571039583075c2f /sweap/binaries/semml && \
-    rm semml-e2650bc88f7a6bdabb52e61f0571039583075c2f.zip && \
-    cd /sweap/binaries/semml && \
-    sed -E -i "s/-Xmx[0-9]+[KMG]/-Xmx${SEMML_XMX}/g" build.gradle.kts && \
-    python3 build.py --target executable && \
-    python3 semml.py --help >/dev/null
 
 
 ARG SPOT_VERSION=2.14.5
@@ -165,16 +179,20 @@ RUN wget -qO spot.tar.gz https://www.lrde.epita.fr/dload/spot/spot-${SPOT_VERSIO
     cd / && \
     rm -rf spot-${SPOT_VERSION} spot.tar.gz
 
-RUN wget --content-disposition https://nuxmv.fbk.eu/theme/download.php\?file\=nuXmv-2.1.0-linux64.tar.xz  && \
-    tar -xvf nuXmv-2.1.0-linux64.tar.xz && \
-    mv /nuXmv-2.1.0-linux64/bin/nuXmv /bin/nuxmv && \
-    mv /nuXmv-2.1.0-linux64/LICENSE.txt /sweap/binaries/LICENSE-nuxmv && \
-    ln -s /bin/nuxmv /bin/nuXmv && \
-    rm -rf nuXmv-2.1.0-linux64*
+ARG SWEAP_REV=3c1c815af6dfbf7f60dc0705385ecb9835b9fc34
+RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/${SWEAP_REV}.zip  && \
+    unzip sweap.zip && mv /sweap-${SWEAP_REV} /sweap && \
+    mv /binaries/* /sweap/binaries
 
-COPY --from=issy-img /usr/bin/issy-bin /usr/bin/issy-bin
-COPY --from=issy-img /usr/bin/z3-4.15.1 /usr/bin/z3-4.15.1
-RUN sed -i "s@/usr/bin/ltl2tgba@/usr/local/bin/ltl2tgba@g" /usr/bin/issy
+WORKDIR /sweap
+RUN pip install --break-system-packages -r requirements.txt && \
+    pip install --break-system-packages -r benchmarks/scripts/requirements.txt
 
-# RUN cp /sweap/Makefile /Makefile && \
-#     sed -i "s/issy/issy-bin/g" /Makefile && \
+COPY libmathsat5j.so /sweap/binaries/CPAchecker-2.3-unix/lib/java/runtime/libmathsat5j.so
+RUN python3 -m compileall -q -o 0 -o 1 /sweap/src
+RUN apt-get autoremove -y && \
+    apt-get autoclean && \
+    pip cache purge
+
+RUN ln -s /bin/nuxmv /sweap/binaries/nuxmv
+
