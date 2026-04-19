@@ -10,7 +10,7 @@ Justification for the badges: [no need to justify Available -- just provide the 
     be awarded (if applied for Functional or Reusable); 
     
     
-    example:  The artifact allows to replicate the results shown in the
+    example: The artifact allows to replicate the results shown in the
     paper (see below). The artifact also includes the source code
     for the tool.
 
@@ -24,9 +24,8 @@ Justification for the badges: [no need to justify Available -- just provide the 
     - not-replicated: 
 
 
-  * Reusable:  The tool is licensed under GNU GPLv3. The docker image allows
-    to execute the tool on arbitrary problems besides the benchmarks (see
-    below).
+  * Reusable: The tool is licensed under GNU GPLv3. The artifact allows to
+    execute the tool on arbitrary problems besides the benchmarks (see below).
     
 Requirements:
 
@@ -49,31 +48,47 @@ external connectivity: NO
 
 Run the following to load the Docker image:
 
-  docker load < docker-tool-image.tar
-
-Create an empty directory `benchmarks` with `mkdir ./benchmarks`.
-This will store benchmarks files and corresponding results,
-allowing for inspection even when the container is not running.
-
-After that, run the image using
-
-  docker run -v ./benchmarks:/benchmarks --rm make setup
-
-The command above starts the docker container, mounts `benchmarks` below the
-container's root directory, and initialises its contents. The `--rm` flag
-creates a disposable container that will be deleted upon exit.
-
-To start the smoke test, run
-
 ```
-docker run -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 --rm sweap-cav25 make TIMEOUT=15 sweap-semml
-docker run -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 --rm sweap-cav25 make TIMEOUT=15 issy
+docker load < docker-tool-image.tar
 ```
 
-This tries to run both our tool (sweap) and the baseline (issy), with a short
-time limit of 15 seconds for each problem, a global timeout of 300 seconds (5
-minutes), and a memory limit of 32 GB. The script should display which command
-is being executed and the timeout, similar to this (first command):
+Extract the results from our run of the experiments with
+`unzip benchmarks-submitted.zip`. This should create a directory name 
+`benchmarks` in the working directory.
+
+To test that the code to generate tables and plots is working, run
+
+```
+docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make tables
+docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make plots
+```
+
+(Note:
+the `--rm` flag creates a disposable container that will be deleted upon exit.
+the `-v` option mounts `benchmarks` below the container's root directory).
+
+
+If any error occurs, please enclose the full output of these commands in the
+smoke test report.
+
+To start the smoke test, first remove all logs with:
+
+```
+docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make clean
+```
+
+Then, execute the following commands:
+
+```
+docker run --rm -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 sweap-cav26:latest make TIMEOUT=15 sweap-semml
+docker run --rm -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 sweap-cav26:latest make TIMEOUT=15 issy
+```
+
+These commands try to run both our tool (sweap) and the baseline (issy), with a 
+short time limit of 15 seconds for each problem, a global timeout of 300 
+seconds (5 minutes), and a memory limit of 32 GB. The script should display
+which command is being executed and the timeout, similar to this
+(first command):
 
 ```
 python3 src/main.py --synthesise --synthesis_backend semml --p /benchmarks/sweap/tacas16/box-limited.prog 15
@@ -90,7 +105,6 @@ issy-bin --synt --caller-z3 /usr/bin/z3-4.15.1 --caller-muval /usr/bin/call-muva
 issy-bin --synt --caller-z3 /usr/bin/z3-4.15.1 --caller-muval /usr/bin/call-muval --caller-aut /usr/local/bin/ltl2tgba --issy /benchmarks/issy/cav25-azzopardi-elevator-paper.issy 15
 ...
 ```
-  
 
 To check that the smoke test was successful, run the following command:
 
@@ -183,6 +197,37 @@ docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make plots
 
 The plots and TeX code for the tables will be generated in
 `benchmarks/results`.
+
+-------------------------------------------------------------------------------
+**                            REUSABLE BADGE                                 **
+-------------------------------------------------------------------------------
+
+As part of our claim to the _Reusable_ badge, we prepared the artifact so that
+users can use it to run Sweap beyond the scope of experiment replication.
+To obtain inline help, use the following command:
+
+```
+docker run --rm sweap --help
+```
+
+To solve a problem `dir/program.prog`, the user should mount the directory
+`dir` onto the container. The basic command for this is
+
+```
+docker run --rm -v ./dir:/dir sweap-cav26:latest sweap --synthesise --synthesis_backend semml --p /dir/program.prog
+```
+
+Additional documentation on the tool and its input format are available with 
+this command:
+
+```
+docker run --rm sweap-cav26:latest cat README.md
+```
+
+The tool and artifact are open-source, with code available at:
+
+* https://github.com/shaunazzopardi/sweap/
+* https://github.com/dSynMa/sweap-docker/tree/cav2026
 
 -------------------------------------------------------------------------------
 **                             FINAL REMARKS                                 **
