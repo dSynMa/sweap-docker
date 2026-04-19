@@ -2,7 +2,7 @@
 
 sweap() (
 cd /sweap
-PYTHONPATH=/sweap/src python3 main.py $@
+PYTHONPATH=/sweap/src python3 src/main.py $@
 )
 
 sweap $@
