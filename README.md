@@ -4,28 +4,22 @@ Paper title: "Sweap: Reactive Synthesis for Infinite-State Integer Problems"
 
 Claimed badges: Available + Functional + Reusable
 
-Justification for the badges: [no need to justify Available -- just provide the DOI link in HotCRP]
+Justification for the badges:
 
-  * Functional: [give reasons why you believe that the Functional badge should
-    be awarded (if applied for Functional or Reusable); 
-    
-    
-    example: The artifact allows to replicate the results shown in the
-    paper (see below). The artifact also includes the source code
-    for the tool.
+  * Functional: The artifact allows to replicate the results shown in the
+    paper (see below), and includes the source code for the tool.
 
-    - replicated: [which claims/results of the paper are replicated by the
-      artifact and how (you can, e.g., refer to a concrete point in FULL REVIEW
-      below), e.g.,
-       * Figure 1, 
-       * Table 2.
-      ]
+    - replicated:
+       * Table 1, 
+       * Figures 3a-d,
+       * Tables 2-4 (in Appendix).
 
-    - not-replicated: 
+    - not-replicated: N/A
 
 
   * Reusable: The tool is licensed under GNU GPLv3. The artifact allows to
-    execute the tool on arbitrary problems besides the benchmarks (see below).
+    execute the tool on arbitrary problems besides the benchmarks;
+    we provide documentation for the tool's input format (see below).
     
 Requirements:
 
@@ -40,7 +34,7 @@ Requirements:
     one at a time. See below for instructions on how to run multiple
     experiments in parallel (if memory and CPU resources allow).
 
-external connectivity: NO
+External connectivity: NO
 
 -------------------------------------------------------------------------------
 **                                SMOKE TEST                                 **
@@ -49,12 +43,13 @@ external connectivity: NO
 Run the following to load the Docker image:
 
 ```
-docker load < docker-tool-image.tar
+docker load < sweap-cav26.tar
 ```
 
 Extract the results from our run of the experiments with
 `unzip benchmarks-submitted.zip`. This should create a directory name 
 `benchmarks` in the working directory.
+(Note: the directory is ~840 MB uncompressed).
 
 To test that the code to generate tables and plots is working, run
 
@@ -81,10 +76,10 @@ Then, execute the following commands:
 
 ```
 docker run --rm -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 sweap-cav26:latest make TIMEOUT=15 sweap-semml
-docker run --rm -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 sweap-cav26:latest make TIMEOUT=15 issy
+docker run --rm -v ./benchmarks:/benchmarks --memory 32g  --stop-timeout=300 sweap-cav26:latest make TIMEOUT=15 issy3
 ```
 
-These commands try to run both our tool (sweap) and the baseline (issy), with a 
+These commands run both our tool (Sweap) and the baseline (Issy), with a 
 short time limit of 15 seconds for each problem, a global timeout of 300 
 seconds (5 minutes), and a memory limit of 32 GB. The script should display
 which command is being executed and the timeout, similar to this
@@ -126,7 +121,7 @@ sweap-semml,3,0,4,0,0,0,7
 The distribution of `right,wrong,timeout`, and `oom` columns might change but
 the value of `error` should be `0` on all rows. If this is the case,
 the smoke-test was successful. If not, please rerun without the
-`>/dev/null && cat ...` and include the full output in the report.
+`>/dev/null` and include the full output in the report.
 
 -------------------------------------------------------------------------------
 **                               FULL REVIEW                                 **
@@ -154,6 +149,22 @@ docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-rpg
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-tsl
 ```
+
+Each names indicates a specific experimental configuration, as follows:
+
+- Issy:
+  * `issy3`: Issy on Issy files.
+  * `issy3-<rpg|tsl>`: Issy on RPG or TSLMT files.
+
+- Sweap, with SemML as the LTL synthesis backend:
+  * `sweap-semml`, `sweap-dual`: Sweap on Sweap files, without/with dualisation.
+  * `sweap-pf`: Virtual portfolio for `sweap-semml` and `sweap-dual`.
+  * `sweap-<issy|rpg|tsl><-dual>`: Sweap on (Issy/RPG/TSLMT) files, without/with dualisation.
+  * `sweap-<lang>-pf`: Virtual portfolio of `sweap-<lang>` and `sweap-<lang>-dual`, for `<lang> = issy, rpg, tsl`.
+
+- Additional configurations:
+  * `sweap-strix`, `sweap-strix-dual`: Sweap on Sweap files, with Strix as backend, without/with dualisation.
+
 
 Running the full benchmark suite can take days on a standard laptop if the
 `make` tasks are run one at a time. If resources allow, the commands may be execute
@@ -185,8 +196,23 @@ cat benchmarks/results/stats.csv
 
 to obtain statistics on the results. (This may be done at any time without
 interfering with running experiments). These results directly correspond
-to those in Table 1, although they are not broken down into realisable and
-unrealisable problems.
+to those in Table 1. They are reported in CSV form with field named
+
+```
+tool,right,right_real,wrong,timeout,oom,unsupported,error,total,total_real,
+```
+
+which should be interpreted as follows:
+
+* `tool` is one of the configurations described above.
+* `right`, `right_real`: Number of correct verdicts made by the tool, both total and limited to realisable instances.
+* `wrong`: Number of incorrect verdicts (realisable instances declared unrealisable, or vice versa).
+* `timeout,oom`: Instances where the tool ran out of time or memory.
+* `unsupported`: Instances using language features not supported by the tool, or failing with another, unrecognised error.
+* `total,total_real`: Overall number of instances and how many of them are realisable.
+
+When `make tables` is run, the CSV is saved in `benchmarks/results/stats.csv`.
+Disaggregated results are also saved, in `benchmarks/results/results.csv`
 
 To recreate the scatter plots from Figure 2 and the tables in Appendix
 (Tables 3--5), run the following command:
@@ -195,8 +221,7 @@ To recreate the scatter plots from Figure 2 and the tables in Appendix
 docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make plots
 ```
 
-The plots and TeX code for the tables will be generated in
-`benchmarks/results`.
+The plots and TeX code for the tables will be saved in `benchmarks/results`.
 
 -------------------------------------------------------------------------------
 **                            REUSABLE BADGE                                 **
