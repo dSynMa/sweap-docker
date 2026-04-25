@@ -179,7 +179,7 @@ RUN wget -qO spot.tar.gz https://www.lrde.epita.fr/dload/spot/spot-${SPOT_VERSIO
     cd / && \
     rm -rf spot-${SPOT_VERSION} spot.tar.gz
 
-ARG SWEAP_REV=9e6fef3d744b44e0d4696056eeb1472530e6a32a
+ARG SWEAP_REV=61c6fd8fd48aaf29e87a9101cf155a62cf1728e3
 RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/${SWEAP_REV}.zip  && \
     unzip sweap.zip && mv /sweap-${SWEAP_REV} /sweap && \
     mv /binaries/* /sweap/binaries
