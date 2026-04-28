@@ -289,7 +289,7 @@ The tool and artifact are open-source, with code available at:
 * https://github.com/shaunazzopardi/sweap/
 * https://github.com/dSynMa/sweap-docker/tree/cav2026
 
-The repository contains additional documentation about running the tool.
+The `sweap` repository contains additional documentation about running the tool.
 
 Additional documentation on the input format is available at this URL:
 
