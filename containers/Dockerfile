@@ -179,7 +179,7 @@ RUN wget -qO spot.tar.gz https://www.lrde.epita.fr/dload/spot/spot-${SPOT_VERSIO
     cd / && \
     rm -rf spot-${SPOT_VERSION} spot.tar.gz
 
-ARG SWEAP_REV=77fbfeb42a5cc8047f77592b879c7349db93bbf5
+ARG SWEAP_REV=65f98f78d654dbbe121083137ec351905c5d5228
 RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/${SWEAP_REV}.zip  && \
     unzip sweap.zip && mv /sweap-${SWEAP_REV} /sweap && \
     mv /binaries/* /sweap/binaries
@@ -195,4 +195,5 @@ RUN apt-get autoremove -y && \
     pip cache purge
 
 RUN ln -s /bin/nuxmv /sweap/binaries/nuxmv
+
 

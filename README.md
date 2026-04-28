@@ -17,8 +17,8 @@ Justification for the badges:
     - not-replicated: N/A
 
 
-  * Reusable: The tool is licensed under GNU GPLv3. The artifact allows to
-    execute the tool on arbitrary problems besides the benchmarks;
+  * Reusable: The tool `sweap` is licensed under GNU GPLv3. The artifact
+    allows to execute the tool on arbitrary problems besides the benchmarks;
     we provide documentation for the tool's input format (see below).
     
 Requirements:
@@ -35,6 +35,19 @@ Requirements:
     experiments in parallel (if memory and CPU resources allow).
 
 External connectivity: NO
+
+
+-------------------------------------------------------------------------------
+**                             IMPORTANT NOTICE                              **
+-------------------------------------------------------------------------------
+
+The tool `sweap` depends on nuXmv internally. As a consequence,
+YOU MUST READ AND AGREE TO THE NUXMV LICENSE BEFORE USING THIS REPOSITORY.
+The license can be found at:
+
+https://nuxmv.fbk.eu/downloads/LICENSE.txt
+
+And inside the Docker image, at `/sweap/binaries/LICENSE-nuxmv`.
 
 -------------------------------------------------------------------------------
 **                                SMOKE TEST                                 **
