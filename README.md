@@ -50,6 +50,11 @@ https://nuxmv.fbk.eu/downloads/LICENSE.txt
 
 And inside the Docker image, at `/sweap/binaries/LICENSE-nuxmv`.
 
+The results provided by this artifact are marginally better than those in
+the original submission, due to performance optimisations and bug fixing.
+The version of the manuscript attached to the Artifact Evaluation submission
+has been updated to reflect the current results
+
 -------------------------------------------------------------------------------
 **                                SMOKE TEST                                 **
 -------------------------------------------------------------------------------
@@ -171,45 +176,50 @@ The full benchmark suite includes:
 * 266 non-Sweap files (`.issy`, `.rpg`, `.tsl`), to be analysed with 3
   configurations (`issy3-<fmt>`, `sweap-<fmt>`, `sweap-<fmt>-dual`)
 
+
 This sums up to 1,178 total experiments. If the tasks are run one at a time,
 even a (quite optimistic) average time of 2 minutes per experiments leads to
 a total runtime of about 39 hours.
-If resources allow, the `make` tasks may be executed concurrently.
-We do _not_ recommend parallelising the individual tasks (e.g.,
-`make -j2 ...`) as that could compromise intermediate file and produce corrupted
-results.
 
-To make the experimental evaluation faster, the user may also override the
-default limit of 10 minutes per experiment by appending `TIMEOUT=<seconds>` to
-any command. **We actually recommend performing a first run with `TIMEOUT=60`
+## Recommended Experimentation Procedure
+
+**We recommend performing a first run with `TIMEOUT=60`
 for a 1-minute limit, which should show the general trends described in the
-paper.** To delete only the results for experiments that timed out, run the
+paper.**
+
+The full list of commands to replicate all experiments is:
+
+```
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-semml TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3 TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-rpg TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-tsl TIMEOUT=60
+```
+
+If resources allow, two or more of tasks above may be executed concurrently.
+We do _not_ recommend parallelising the individual tasks (e.g.,
+`make -j2 ...`) as that could compromise intermediate files and produce
+corrupted results.
+Also note that the experiments are resumable. If a `make` task is terminated
+abruptly, invoking the same command will only run the experiments that have
+not yet been performed.
+
+To delete only the results for experiments that timed out, run the
 following command:
 
 ```
 docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make clean-timeouts
 ```
 
-The full list of commands to replicate all experiments is:
-
-```
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-semml
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-rpg
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-tsl
-```
-
-
-Also note that the experiments are resumable. If a `make` task is terminated
-abruptly, invoking the same command will only run the experiments that have
-not yet been performed.
+Then, rerun the `make` tasks above _without `TIMEOUT=60`_ to run the remaining
+experiments with the full 10-minute timeout.
 
 Again, use the commands
 
@@ -259,12 +269,6 @@ Note that the evaluation might also be performed using `podman` instead of
 **                            REUSABLE BADGE                                 **
 -------------------------------------------------------------------------------
 
-The tool and artifact are open-source, with code available at:
-
-* https://github.com/shaunazzopardi/sweap/
-* https://github.com/dSynMa/sweap-docker/tree/cav2026
-
-
 As part of our claim to the _Reusable_ badge, we prepared the artifact so that
 users can use it to run Sweap beyond the scope of experiment replication.
 To obtain inline help, use the following command:
@@ -279,6 +283,13 @@ To solve a problem `dir/program.prog`, the user should mount the directory
 ```
 docker run --rm -v ./dir:/dir sweap-cav26:latest sweap --synthesise --synthesis_backend semml --p /dir/program.prog
 ```
+
+The tool and artifact are open-source, with code available at:
+
+* https://github.com/shaunazzopardi/sweap/
+* https://github.com/dSynMa/sweap-docker/tree/cav2026
+
+The repository contains additional documentation about running the tool.
 
 Additional documentation on the input format is available at this URL:
 
