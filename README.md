@@ -10,12 +10,13 @@ Justification for the badges:
     paper (see below), and includes the source code for the tool.
 
     - replicated:
-       * Table 1, 
+       * Table 1 (overall results),  
        * Figures 3a-d,
        * Tables 2-4 (in Appendix).
 
-    - not-replicated: N/A
-
+    - not-replicated: N/A. We do not separate results between
+      realisable/unrealisable instances as Table 1 does, but the data is
+      directly derived from Tables 2-4.
 
   * Reusable: The tool `sweap` is licensed under GNU GPLv3. The artifact
     allows to execute the tool on arbitrary problems besides the benchmarks;
@@ -48,6 +49,11 @@ The license can be found at:
 https://nuxmv.fbk.eu/downloads/LICENSE.txt
 
 And inside the Docker image, at `/sweap/binaries/LICENSE-nuxmv`.
+
+The results provided by this artifact are marginally better than those in
+the original submission, due to performance optimisations and bug fixing.
+The version of the manuscript attached to the Artifact Evaluation submission
+has been updated to reflect the current results
 
 -------------------------------------------------------------------------------
 **                                SMOKE TEST                                 **
@@ -136,34 +142,19 @@ the value of `error` should be `0` on all rows. If this is the case,
 the smoke-test was successful. If not, please rerun without the
 `>/dev/null` and include the full output in the report.
 
--------------------------------------------------------------------------------
-**                               FULL REVIEW                                 **
--------------------------------------------------------------------------------
-
 Assuming the smoke test passed, run the following commands to remove
-previous results:
+the generated results:
 
 ```
 docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make clean
 ```
 
-Then, the full benchmark suite may be evaluated by running these commands:
+-------------------------------------------------------------------------------
+**                               FULL REVIEW                                 **
+-------------------------------------------------------------------------------
 
-```
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-semml
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl-dual
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-rpg
-docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-tsl
-```
-
-Each names indicates a specific experimental configuration, as follows:
+The full experimental suite is described in a set of `make` recipes.
+Each recipe name indicates a specific experimental configuration, as follows:
 
 - Issy:
   * `issy3`: Issy on Issy files.
@@ -173,32 +164,62 @@ Each names indicates a specific experimental configuration, as follows:
   * `sweap-semml`, `sweap-dual`: Sweap on Sweap files, without/with dualisation.
   * `sweap-pf`: Virtual portfolio for `sweap-semml` and `sweap-dual`.
   * `sweap-<issy|rpg|tsl><-dual>`: Sweap on (Issy/RPG/TSLMT) files, without/with dualisation.
-  * `sweap-<lang>-pf`: Virtual portfolio of `sweap-<lang>` and `sweap-<lang>-dual`, for `<lang> = issy, rpg, tsl`.
+  * `sweap-<fmt>-pf`: Virtual portfolio of `sweap-<fmt>` and `sweap-<fmt>-dual`, for `<fmt> = issy, rpg, tsl`.
 
 - Additional configurations:
   * `sweap-strix`, `sweap-strix-dual`: Sweap on Sweap files, with Strix as backend, without/with dualisation.
 
+The full benchmark suite includes:
 
-Running the full benchmark suite can take days on a standard laptop if the
-`make` tasks are run one at a time. If resources allow, the commands may be execute
-concurrently. We do _not_ recommend parallelising the individual tasks (e.g.,
-`make -j2 ...`) as that could compromise intermediate file and produce corrupted
-results.
+* 95 Sweap files (`.prog`), to be analysed with 4 configurations
+  (`sweap-semml`, `sweap-dual`, `sweap-strix`, `sweap-strix-dual`)
+* 266 non-Sweap files (`.issy`, `.rpg`, `.tsl`), to be analysed with 3
+  configurations (`issy3-<fmt>`, `sweap-<fmt>`, `sweap-<fmt>-dual`)
 
-To make the experimental evaluation faster, the user may also override the
-default limit of 10 minutes per experiment by appending `TIMEOUT=<seconds>` to
-any command. We actually recommend performing a first run with `TIMEOUT=300`
-for a 5-minute limit, which should show the general trends described in the
-paper. To delete only the results for experiments that timed out, run the
+
+This sums up to 1,178 total experiments. If the tasks are run one at a time,
+even a (quite optimistic) average time of 2 minutes per experiments leads to
+a total runtime of about 39 hours.
+
+## Recommended Experimentation Procedure
+
+**We recommend performing a first run with `TIMEOUT=60`
+for a 1-minute limit, which should show the general trends described in the
+paper.**
+
+The full list of commands to replicate all experiments is:
+
+```
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-semml TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3 TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-rpg TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make issy3-tsl TIMEOUT=60
+```
+
+If resources allow, two or more of tasks above may be executed concurrently.
+We do _not_ recommend parallelising the individual tasks (e.g.,
+`make -j2 ...`) as that could compromise intermediate files and produce
+corrupted results.
+Also note that the experiments are resumable. If a `make` task is terminated
+abruptly, invoking the same command will only run the experiments that have
+not yet been performed.
+
+To delete only the results for experiments that timed out, run the
 following command:
 
 ```
 docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make clean-timeouts
 ```
 
-Also note that the experiments are resumable. If a `make` task is terminated
-abruptly, invoking the same command will only run the experiments that have
-not yet been performed.
+Then, rerun the `make` tasks above _without `TIMEOUT=60`_ to run the remaining
+experiments with the full 10-minute timeout.
 
 Again, use the commands
 
@@ -237,6 +258,14 @@ docker run --rm -v ./benchmarks:/benchmarks sweap-cav26:latest make plots
 The plots and TeX code for the tables will be saved in `benchmarks/results`.
 
 -------------------------------------------------------------------------------
+**                             PODMAN vs DOCKER                              **
+-------------------------------------------------------------------------------
+
+Note that the evaluation might also be performed using `podman` instead of
+`docker`, with minimal changes to the command lines provided above (e.g.,
+`--stop-timeout` becomes `--timeout` in Podman).
+
+-------------------------------------------------------------------------------
 **                            REUSABLE BADGE                                 **
 -------------------------------------------------------------------------------
 
@@ -245,7 +274,7 @@ users can use it to run Sweap beyond the scope of experiment replication.
 To obtain inline help, use the following command:
 
 ```
-docker run --rm sweap --help
+docker run --rm sweap-cav26:latest sweap --help
 ```
 
 To solve a problem `dir/program.prog`, the user should mount the directory
@@ -255,23 +284,20 @@ To solve a problem `dir/program.prog`, the user should mount the directory
 docker run --rm -v ./dir:/dir sweap-cav26:latest sweap --synthesise --synthesis_backend semml --p /dir/program.prog
 ```
 
-Additional documentation on the tool and its input format are available with 
-this command:
-
-```
-docker run --rm sweap-cav26:latest cat README.md
-```
-
 The tool and artifact are open-source, with code available at:
 
 * https://github.com/shaunazzopardi/sweap/
 * https://github.com/dSynMa/sweap-docker/tree/cav2026
 
--------------------------------------------------------------------------------
-**                             FINAL REMARKS                                 **
--------------------------------------------------------------------------------
+The `sweap` repository contains additional documentation about running the tool.
 
-Note that the evaluation might also be performed using `podman` instead of
-`docker`, with minimal changes to the command lines provided above (e.g.,
-`--stop-timeout` becomes `--timeout` in Podman).
+Additional documentation on the input format is available at this URL:
 
+https://github.com/shaunazzopardi/sweap/blob/dddfc726f59a3c606d2c9b322d656296f90a2a40/SYNTAX.md
+
+This documentation is also part of the artifact, and may be extracted with
+the command
+
+```
+docker run --rm sweap-cav26:latest cat /sweap/SYNTAX.md
+```
