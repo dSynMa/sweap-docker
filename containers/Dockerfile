@@ -75,7 +75,7 @@ RUN chmod +x /usr/bin/issy  \
  && chmod +x /usr/bin/call-muval
 
 ###############################################################################
-FROM ubuntu:24.04@sha256:3afff29dffbc200d202546dc6c4f614edc3b109691e7ab4aa23d02b42ba86790 as semml-img
+FROM ubuntu:24.04@sha256:3afff29dffbc200d202546dc6c4f614edc3b109691e7ab4aa23d02b42ba86790 AS semml-img
 WORKDIR /
 
 RUN apt-get update && \
@@ -103,7 +103,7 @@ RUN mkdir -p /binaries && \
 
 ###############################################################################
 
-FROM ubuntu:24.04@sha256:3afff29dffbc200d202546dc6c4f614edc3b109691e7ab4aa23d02b42ba86790 as final
+FROM ubuntu:24.04@sha256:3afff29dffbc200d202546dc6c4f614edc3b109691e7ab4aa23d02b42ba86790 AS final
 WORKDIR /
 
 RUN apt-get update && \
@@ -179,7 +179,7 @@ RUN wget -qO spot.tar.gz https://www.lrde.epita.fr/dload/spot/spot-${SPOT_VERSIO
     cd / && \
     rm -rf spot-${SPOT_VERSION} spot.tar.gz
 
-ARG SWEAP_REV=65f98f78d654dbbe121083137ec351905c5d5228
+ARG SWEAP_REV=a43b2e15e2ebb2e2e104370f01bf8707bde40a94
 RUN wget -qO sweap.zip https://github.com/shaunazzopardi/sweap/archive/${SWEAP_REV}.zip  && \
     unzip sweap.zip && mv /sweap-${SWEAP_REV} /sweap && \
     mv /binaries/* /sweap/binaries
