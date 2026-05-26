@@ -194,6 +194,8 @@ docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-dual TIMEOUT=60
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix TIMEOUT=60
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-strix-dual TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-issy TIMEOUT=60
+docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-issy-dual TIMEOUT=60
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg TIMEOUT=60
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-rpg-dual TIMEOUT=60
 docker run --rm --memory 32g -v ./benchmarks:/benchmarks sweap-cav26:latest make sweap-tsl TIMEOUT=60
